@@ -2,12 +2,16 @@ require("dotenv").config();
 
 const express = require("express");
 const mongoose = require("mongoose");
+const router = express.Router();
+
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
 // middleware
 app.use(express.static("public"));
 app.use(express.json());
+app.use("/api", router);
 
 async function main() {
   const dbURI = process.env.DB_URI;
@@ -30,3 +34,4 @@ try {
 }
 
 router.get("/", (req, res) => res.send("home"));
+app.use("/api", authRoutes);
