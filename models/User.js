@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { isEmail } = require("validator");
+const argon2 = require("argon2");
 
 const currencySchema = new mongoose.Schema({
   currency: {
@@ -46,6 +47,21 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+userSchema.pre('save', async function(next) {
+  try {
+    const hashedPwd = await argon2.hash(this.password, {
+      type: argon2.argon2id,
+    });
+    this.password = hashedPwd;
+    next();
+  } catch (error) {
+    // next(error); TODO: decide which approach you want to use when handling error cases
+    const hashError = new Error("Failed to hash the password");
+    hashError.statusCode = 500;
+    next(hashError);
+  }
+})
 
 const User = mongoose.model("user", userSchema);
 
