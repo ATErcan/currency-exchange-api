@@ -55,10 +55,25 @@ const handleErrors = (err) => {
     };
   }
 
+  // invalid credentials
+  if(err.message === "Invalid email or password") {
+    status = err.statusCode || 500;
+    return {
+      status,
+      message: err.message
+    }
+  }
+
   return {
     status,
     message: err.message || "An unexpected error occurred",
   };
 };
 
-module.exports = { createToken, handleErrors };
+const createError = (message, statusCode) => {
+  const error = new Error(message);
+  error.statusCode = statusCode;
+  return error;
+}
+
+module.exports = { createToken, handleErrors, createError };
