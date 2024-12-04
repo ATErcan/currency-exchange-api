@@ -2,7 +2,8 @@ const argon2 = require("argon2");
 
 const User = require("../models/User");
 const createUser = require("../services/userService");
-const { createToken, handleErrors, createError } = require("../utils/auth");
+const { createToken, handleErrors } = require("../utils/auth");
+const { createError } = require("../utils/common");
 
 const signup_post = async (req, res) => {
   const { name, email, password } = req.body;

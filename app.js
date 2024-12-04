@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const router = express.Router();
 
 const authRoutes = require("./routes/authRoutes");
+const financialRoutes = require("./routes/financialRoutes");
 
 const app = express();
 
@@ -35,3 +36,4 @@ try {
 
 router.get("/", (req, res) => res.send("home"));
 app.use("/api", authRoutes);
+app.use("/api", financialRoutes);
