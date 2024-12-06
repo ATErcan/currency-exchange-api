@@ -6,6 +6,7 @@ const router = express.Router();
 
 const authRoutes = require("./routes/auth-routes");
 const financialRoutes = require("./routes/financial-routes");
+const verifyUser = require("./middleware/auth-middleware");
 
 const app = express();
 
@@ -36,4 +37,4 @@ try {
 
 router.get("/", (req, res) => res.send("home"));
 app.use("/api", authRoutes);
-app.use("/api", financialRoutes);
+app.use("/api", verifyUser ,financialRoutes);

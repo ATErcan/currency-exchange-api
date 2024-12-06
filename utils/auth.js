@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const { JWT_SECRET, JWT_MAX_AGE } = require("../config/jwtConfig");
+const { JWT_SECRET, JWT_MAX_AGE } = require("../config/jwt-config");
 const { createError } = require("./common");
 
 const createToken = (data) => {
@@ -15,13 +15,13 @@ const decodeToken = (token) => {
   try {
     return jwt.verify(token, JWT_SECRET);
   } catch (error) {
-    if (
-      error.message === "invalid signature" ||
-      error.message === "jwt expired"
-    ) {
-      throw createError("Invalid or expired token", 401);
+    if (error.name === "TokenExpiredError") {
+      throw createError("Token has expired", 401);
     }
-    throw new Error("Failed to decode token");
+    if (error.name === "JsonWebTokenError") {
+      throw createError("Invalid token", 401);
+    }
+    throw createError("Failed to decode token", 500);
   }
 }
 
