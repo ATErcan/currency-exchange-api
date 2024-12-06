@@ -1,6 +1,6 @@
 const { Router } = require("express");
 
-const { user_financial_get } = require('../controllers/financialController');
+const { user_financial_get } = require('../controllers/financial-controller');
 
 const router = Router();
 

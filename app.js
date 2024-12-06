@@ -4,8 +4,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 
-const authRoutes = require("./routes/authRoutes");
-const financialRoutes = require("./routes/financialRoutes");
+const authRoutes = require("./routes/auth-routes");
+const financialRoutes = require("./routes/financial-routes");
 
 const app = express();
 
