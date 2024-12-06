@@ -4,7 +4,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 
-const authRoutes = require("./routes/authRoutes");
+const authRoutes = require("./routes/auth-routes");
+const financialRoutes = require("./routes/financial-routes");
+const verifyUser = require("./middleware/auth-middleware");
 
 const app = express();
 
@@ -35,3 +37,4 @@ try {
 
 router.get("/", (req, res) => res.send("home"));
 app.use("/api", authRoutes);
+app.use("/api", verifyUser ,financialRoutes);
