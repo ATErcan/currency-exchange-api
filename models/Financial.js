@@ -22,6 +22,11 @@ const financialSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  baseCurrency: {
+    type: String,
+    default: "PLN",
+    immutable: true,
+  },
   balance: {
     type: Number,
     default: 0,
