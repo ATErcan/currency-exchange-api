@@ -1,7 +1,7 @@
 const argon2 = require("argon2");
 
 const User = require("../models/User");
-const createUser = require("../services/userService");
+const createUser = require("../services/user-service");
 const { createToken, handleErrors } = require("../utils/auth");
 const { createError } = require("../utils/common");
 

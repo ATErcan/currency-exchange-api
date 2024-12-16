@@ -17,7 +17,6 @@ const transactionSchema = new mongoose.Schema(
     amount: {
       type: Number,
       required: [!isExchange, "Missing fund amount"],
-      default: null
     },
     from: {
       currency: {
@@ -28,7 +27,6 @@ const transactionSchema = new mongoose.Schema(
         type: Number,
         required: [isExchange, "Missing sold currency data"],
       },
-      default: null,
     },
     to: {
       currency: {
@@ -39,12 +37,10 @@ const transactionSchema = new mongoose.Schema(
         type: Number,
         required: [isExchange, "Missing bought currency data"],
       },
-      default: null,
     },
     exchangeRate: {
       type: Number,
       required: [isExchange, "Missing exchange rate data"],
-      default: null,
     },
   },
   { timestamps: { createdAt: true } }
