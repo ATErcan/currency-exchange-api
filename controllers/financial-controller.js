@@ -1,7 +1,7 @@
 const Financial = require("../models/Financial");
-
 const { createError } = require("../utils/common");
 const { handleErrors } = require("../utils/financial");
+const { addFunds } = require("../services/financial-service");
 
 const user_financial_get = async (req, res) => {
   try {
@@ -21,4 +21,24 @@ const user_financial_get = async (req, res) => {
   }
 }
 
-module.exports = { user_financial_get }
+const add_funds_patch = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { amount } = req.body;
+    const type = "fund";
+
+    const { newTransaction, userFinancial } = await addFunds(userId, type, amount);
+
+    res.status(200).json({
+      data: {
+        transaction: newTransaction,
+        balance: userFinancial.balance,
+      },
+    });
+  } catch (error) {
+    const { status, message } = handleErrors(error);
+    res.status(status).json({ status: "error", error: message })
+  }
+}
+
+module.exports = { user_financial_get, add_funds_patch };
