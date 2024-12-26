@@ -16,4 +16,7 @@ const handleErrors = (err) => {
   return errors;
 }
 
-module.exports = { handleErrors };
+const checkCurrencyCode = (table, code) =>
+  table.find((currency) => currency.code === code);
+
+module.exports = { handleErrors, checkCurrencyCode };
