@@ -1,6 +1,9 @@
+const Decimal = require("decimal.js");
+
 const Financial = require("../models/Financial");
 const { getAllCurrencies } = require("./api");
 const { createError } = require("./common");
+const { TOLERANCE, PRECISION } = require("../lib/constants");
 
 const handleFinancialErrors = (err) => {
   const errors = { status: 500, message: "An unexpected error occurred" };
@@ -23,19 +26,21 @@ const handleFinancialErrors = (err) => {
 const checkCurrencyCode = (table, code) =>
   table?.find((currency) => currency.code === code);
 
+const roundToPrecision = (number, precision = PRECISION) =>
+  new Decimal(number).toDecimalPlaces(precision).toNumber();
+
 const exchangeValidation = (from, to, rate) => {
   if (from.code === to.code) {
     throw createError("Invalid currency transaction", 400);
   }
 
-  // TODO: small exchange rates like 0.00034 will break the calculation, fix it
-  const tolerance = 0.001;
-  const exchangeRate = Number((from.mid / to.mid).toFixed(3));
-  const exchangeResult = Number((from.amount * exchangeRate).toFixed(3));
-  if (Math.abs(rate - exchangeRate) > tolerance) {
+  const exchangeRate = roundToPrecision(new Decimal(from.mid).div(to.mid));
+  const exchangeResult = roundToPrecision(new Decimal(from.amount).times(exchangeRate));
+
+  if (Decimal.abs(new Decimal(rate).minus(exchangeRate)).gt(TOLERANCE)) {
     throw createError("Exchange rate is outdated or tampered", 400);
   }
-  if(Math.abs(exchangeResult - to.amount) > tolerance) {
+  if(Decimal.abs(new Decimal(exchangeResult).minus(to.amount)).gt(TOLERANCE)) {
     throw createError("The exchange amounts do not match the expected calculation. Please verify the values and try again.", 400);
   }
   if(exchangeRate < 1 && from.amount < 1) {
@@ -82,20 +87,20 @@ const performExchange = async (userId, session, from, to) => {
     if (userFinancial.balance < from.amount) {
       throw createError("You do not have sufficient funds to perform this transaction.", 400);
     }
-    userFinancial.balance -= from.amount;
+    userFinancial.balance = roundToPrecision(new Decimal(userFinancial.balance).minus(from.amount));
   } else {
     if (!fromCurrencyBalance || fromCurrencyBalance.amount < from.amount) {
       throw createError("You do not have sufficient funds in the currency you selected.", 400);
     }
-    fromCurrencyBalance.amount -= from.amount;
+    fromCurrencyBalance.amount = roundToPrecision(new Decimal(fromCurrencyBalance.amount).minus(from.amount))
   }
 
   if (to.code === userFinancial.baseCurrency) {
-    userFinancial.balance += to.amount;
+    userFinancial.balance = roundToPrecision(new Decimal(userFinancial.balance).plus(to.amount));
   } else if (toCurrencyBalance) {
-    toCurrencyBalance.amount += to.amount;
+    toCurrencyBalance.amount = roundToPrecision(new Decimal(toCurrencyBalance.amount).plus(to.amount));
   } else {
-    userFinancial.currencies.push({ code: to.code, amount: to.amount });
+    userFinancial.currencies.push({ code: to.code, amount: roundToPrecision(to.amount) });
   }
 
   return userFinancial;
