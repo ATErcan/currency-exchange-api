@@ -19,7 +19,7 @@ const transactionSchema = new mongoose.Schema(
       required: [!isExchange, "Missing fund amount"],
     },
     from: {
-      currency: {
+      code: {
         type: String,
         required: [isExchange, "Missing sold currency data"],
       },
@@ -29,7 +29,7 @@ const transactionSchema = new mongoose.Schema(
       },
     },
     to: {
-      currency: {
+      code: {
         type: String,
         required: [isExchange, "Missing bought currency data"],
       },

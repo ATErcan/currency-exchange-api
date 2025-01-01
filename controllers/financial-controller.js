@@ -1,7 +1,7 @@
 const Financial = require("../models/Financial");
 const { createError } = require("../utils/common");
-const { handleErrors } = require("../utils/financial");
-const { addFunds } = require("../services/financial-service");
+const { handleFinancialErrors, handleExchangeErrors } = require("../utils/financial");
+const { addFunds, exchangeCurrency } = require("../services/financial-service");
 
 const user_financial_get = async (req, res) => {
   try {
@@ -16,7 +16,7 @@ const user_financial_get = async (req, res) => {
       data: userFinancial
     })
   } catch (error) {
-    const { status, message } = handleErrors(error);
+    const { status, message } = handleFinancialErrors(error);
     res.status(status).json({ status: "error", error: message });
   }
 }
@@ -36,9 +36,37 @@ const add_funds_patch = async (req, res) => {
       },
     });
   } catch (error) {
-    const { status, message } = handleErrors(error);
-    res.status(status).json({ status: "error", error: message })
+    const { status, message } = handleFinancialErrors(error);
+    res.status(status).json({ status: "error", error: message });
   }
 }
 
-module.exports = { user_financial_get, add_funds_patch };
+const exchange_currency_post = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { from, to, rate } = req.body;
+    const type = "exchange";
+
+    const { userFinancial, newTransaction } = await exchangeCurrency(userId, type, from, to, rate);
+
+    res.status(200).json({
+      data: {
+        financial: {
+          balance: userFinancial.balance,
+          currencies: userFinancial.currencies
+        },
+        transaction: newTransaction
+      }
+    })
+  } catch (error) {
+    console.log(error)
+    const { status, message } = handleExchangeErrors(error);
+    res.status(status).json({ status: "error", error: message });
+  }
+}
+
+module.exports = {
+  user_financial_get,
+  add_funds_patch,
+  exchange_currency_post,
+};
