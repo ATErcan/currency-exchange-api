@@ -107,67 +107,10 @@ const performExchange = async (userId, session, from, to) => {
 }
 
 const handleExchangeErrors = (err) => {
-  const errors = { status: 500, message: "An unexpected error occurred" };
-
-  if (err.message.includes("User financial data not found!")) {
-    errors.status = err.statusCode;
-    errors.message = err.message;
-    return errors;
-  }
-
-  if(err.message === "Invalid currency transaction") {
-    errors.status = err.statusCode;
-    errors.message = err.message;
-    return errors;
-  }
-
-  if (err.message.includes("NBP API tables are unavailable")) {
-    errors.status = err.statusCode;
-    errors.message = err.message;
-    return errors;
-  }
-
-  if (err.message.includes("Failed to fetch currency rates")) {
-    errors.status = err.statusCode;
-    errors.message = err.message;
-    return errors;
-  }
-
-  if (err.message.includes("Currency not found")) {
-    errors.status = err.statusCode;
-    errors.message = err.message;
-    return errors;
-  }
-
-  if (err.message === "Exchange rate is outdated or tampered") {
-    errors.status = err.statusCode;
-    errors.message = err.message;
-    return errors;
-  }
-
-  if (err.message === "Exchange rate is outdated or tampered") {
-    errors.status = err.statusCode;
-    errors.message = err.message;
-    return errors;
-  }
-
-  if (err.message.includes("The exchange amounts do not match the expected calculation")) {
-    errors.status = err.statusCode;
-    errors.message = err.message;
-    return errors;
-  }
-
-  if (err.message.includes("The amount is too low to process with the current exchange rate")) {
-    errors.status = err.statusCode;
-    errors.message = err.message;
-    return errors;
-  }
-
-  if (err.message.includes("You do not have sufficient funds")) {
-    errors.status = err.statusCode;
-    errors.message = err.message;
-    return errors;
-  }
+  const errors = {
+    status: err.statusCode || 500,
+    message: err.statusCode ? err.message : "An unexpected error occurred",
+  };
 
   return errors;
 }

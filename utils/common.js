@@ -1,9 +1,14 @@
 const mongoose = require("mongoose");
 
+class CustomError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
+
 const createError = (message, statusCode) => {
-  const error = new Error(message);
-  error.statusCode = statusCode;
-  return error;
+  return new CustomError(message, statusCode);
 };
 
 const executeWithTransaction = async (callback) => {
