@@ -17,7 +17,6 @@ const signup_post = async (req, res) => {
     });
 
     res.status(201).json({
-      status: "success",
       jwt: {
         token,
       },
@@ -29,7 +28,7 @@ const signup_post = async (req, res) => {
     });
   } catch (error) {
     const { status, message } = handleErrors(error);
-    res.status(status).json({ status: "error", error: message });
+    res.status(status).json({ message });
   }
 };
 
