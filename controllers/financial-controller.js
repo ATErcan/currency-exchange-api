@@ -17,7 +17,7 @@ const user_financial_get = async (req, res) => {
     })
   } catch (error) {
     const { status, message } = handleFinancialErrors(error);
-    res.status(status).json({ status: "error", error: message });
+    res.status(status).json({ message });
   }
 }
 
