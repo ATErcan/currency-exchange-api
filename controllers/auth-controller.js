@@ -49,7 +49,6 @@ const login_post = async (req, res) => {
         email: user.email,
       });
       res.status(200).json({
-        status: "success",
         jwt: {
           token,
         },
@@ -64,7 +63,7 @@ const login_post = async (req, res) => {
     }
   } catch (error) {
     const { status, message } = handleErrors(error);
-    res.status(status).json({ status: "error", error: message })
+    res.status(status).json({ message })
   }
 };
 
