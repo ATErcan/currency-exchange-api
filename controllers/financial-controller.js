@@ -33,11 +33,12 @@ const add_funds_patch = async (req, res) => {
       data: {
         transaction: newTransaction,
         balance: userFinancial.balance,
+        baseCurrency: userFinancial.baseCurrency
       },
     });
   } catch (error) {
     const { status, message } = handleFinancialErrors(error);
-    res.status(status).json({ status: "error", error: message });
+    res.status(status).json({ message });
   }
 }
 
@@ -53,15 +54,15 @@ const exchange_currency_post = async (req, res) => {
       data: {
         financial: {
           balance: userFinancial.balance,
+          baseCurrency: userFinancial.baseCurrency,
           currencies: userFinancial.currencies
         },
         transaction: newTransaction
       }
     })
   } catch (error) {
-    console.log(error)
     const { status, message } = handleExchangeErrors(error);
-    res.status(status).json({ status: "error", error: message });
+    res.status(status).json({ message });
   }
 }
 
